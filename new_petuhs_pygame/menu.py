@@ -1,4 +1,7 @@
 import pygame
+import liders
+import flappybird
+import sys
 class GUI:
     def __init__(self):
         self.elements = []
@@ -73,9 +76,11 @@ class Button(Label):
     def get_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             self.pressed = self.rect.collidepoint(event.pos)
+            if self.pressed:
+                self.funct()
         elif event.type == pygame.MOUSEBUTTONUP and event.button == 1:
             self.pressed = False
-            self.funct()
+
 class TextBox(Label):
     def __init__(self, rect, text):
         super().__init__(rect, text)
@@ -97,6 +102,11 @@ class TextBox(Label):
     def execute(self):
         name = self.text
 
+        with open('name.txt','w') as file:
+            file.write(name)
+        flappybird.main()
+        pygame.quit();
+        sys.exit();
     def update(self):
         MAX_LEN_SYM = 10
         if len(self.text) > MAX_LEN_SYM:
@@ -124,7 +134,9 @@ def main(screen):
     lab2 = Label((45, 90, 350, 80), 'введите имя')
     t1 = TextBox((45, 180, 350, 80),'')
     b1 = Button((45, 300, 150, 80), "OK", t1.execute)
+    b2 = Button((45, 400, 230, 80), "Таблица", liders.Print_Table)
     gui.add_element(b1)
+    gui.add_element(b2)
     gui.add_element(lab)
     gui.add_element(lab2)
     gui.add_element(t1)

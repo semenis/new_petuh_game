@@ -16,7 +16,7 @@ def Print_Table():
     with open('save.txt','r') as save:
         introText = map(lambda x: x.strip(), save.readlines())
 
-    screen.fill(pygame.Color('blue'))
+    screen.fill(pygame.Color('green'))
     screen.blit(images['petuh'], (0, 0))
     font = pygame.font.Font(None, 30)
     textCoord = 50
@@ -39,6 +39,4 @@ def Print_Table():
                 pygame.quit();
                 sys.exit();
         pygame.display.flip()
-AddPoint('Semyon',1)
-AddPoint('Ruslan',10)
-Print_Table()
+

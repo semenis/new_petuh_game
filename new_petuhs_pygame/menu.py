@@ -2,6 +2,8 @@ import pygame
 import liders
 import flappybird
 import sys
+
+
 class GUI:
     def __init__(self):
         self.elements = []
@@ -26,7 +28,11 @@ class GUI:
             get_event = getattr(element, "get_event", None)
             if callable(get_event):
                 element.get_event(event)
+
+
 gui = GUI()
+
+
 class Label:
     def __init__(self, rect, text):
         self.rect = pygame.Rect(rect)
@@ -45,6 +51,8 @@ class Label:
         self.rendered_rect = self.rendered_text.get_rect(x=self.rect.x + 2, centery=self.rect.centery)
         # выводим текст
         surface.blit(self.rendered_text, self.rendered_rect)
+
+
 class Button(Label):
     def __init__(self, rect, text, funct):
         super().__init__(rect, text)
@@ -107,10 +115,11 @@ class TextBox(Label):
         flappybird.main()
         pygame.quit();
         sys.exit();
+
     def update(self):
         MAX_LEN_SYM = 10
         if len(self.text) > MAX_LEN_SYM:
-            self.text = self.text[:10]
+            self.text = self.text[:MAX_LEN_SYM]
         if pygame.time.get_ticks() - self.blink_timer > 200:
             self.blink = not self.blink
             self.blink_timer = pygame.time.get_ticks()
@@ -128,11 +137,13 @@ def init():
     pygame.init()
     screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
     return screen
+
+
 def main(screen):
     gui = GUI()
     lab = Label((45, 10, 350, 80), 'Пожалуйста,')
     lab2 = Label((45, 90, 350, 80), 'введите имя')
-    t1 = TextBox((45, 180, 350, 80),'')
+    t1 = TextBox((45, 180, 350, 80), '')
     b1 = Button((45, 300, 150, 80), "OK", t1.execute)
     b2 = Button((45, 400, 230, 80), "Таблица", liders.Print_Table)
     gui.add_element(b1)
@@ -151,6 +162,6 @@ def main(screen):
         gui.render(screen)
         # обновляеем все GUI-элементы
         gui.update()
-
         pygame.display.flip()
+
 main(init())

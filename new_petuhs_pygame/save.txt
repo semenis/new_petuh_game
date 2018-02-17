@@ -1,2 +1,5 @@
 Semyon 101
 Ruslan 10
+andrey 0
+Semyon 104
+  0

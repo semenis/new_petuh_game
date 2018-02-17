@@ -239,6 +239,9 @@ def main():
             introRect.x = 10
             textCoord += introRect.height
             screen.blit(stringRendered, introRect)
+        import liders
+        with open('name.txt','r') as file:
+            liders.AddPoint(file.readline(),score)
 
         while True:
             for event in pygame.event.get():

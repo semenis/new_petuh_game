@@ -34,6 +34,7 @@ gui = GUI()
 
 
 class Label:
+
     def __init__(self, rect, text):
         self.rect = pygame.Rect(rect)
         self.text = text
@@ -44,7 +45,6 @@ class Label:
         self.rendered_text = None
         self.rendered_rect = None
 
-
     def render(self, surface):
         surface.fill(self.bgcolor, self.rect)
         self.rendered_text = self.font.render(self.text, 1, self.font_color)
@@ -54,6 +54,7 @@ class Label:
 
 
 class Button(Label):
+
     def __init__(self, rect, text, funct):
         super().__init__(rect, text)
         self.funct = funct
@@ -90,6 +91,7 @@ class Button(Label):
             self.pressed = False
 
 class TextBox(Label):
+
     def __init__(self, rect, text):
         super().__init__(rect, text)
         self.active = True
@@ -107,6 +109,7 @@ class TextBox(Label):
                 self.text += event.unicode
         elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             self.active = self.rect.collidepoint(event.pos)
+
     def execute(self):
         name = self.text
 
@@ -136,6 +139,7 @@ def init():
     WIN_HEIGHT = 512
     pygame.init()
     screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+    screen.fill(pygame.Color('blue'))
     return screen
 
 
@@ -158,7 +162,7 @@ def main(screen):
                 run = False
             # передаем события пользователя GUI-элементам
             gui.get_event(event);
-            # отрисовываем все GUI-элементы
+        # отрисовываем все GUI-элементы
         gui.render(screen)
         # обновляеем все GUI-элементы
         gui.update()

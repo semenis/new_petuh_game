@@ -6,13 +6,14 @@ from collections import deque
 import pygame
 from pygame.locals import *
 import sys
-#import time
-#import datetime
+
+# import time
+# import datetime
 
 
 FPS = 60
 ANIMATION_SPEED = 0.18  # пикселей в мс
-WIN_WIDTH = 284 * 2     # Размер заднего фона : 284x512 px
+WIN_WIDTH = 284 * 2  # Размер заднего фона : 284x512 px
 WIN_HEIGHT = 512
 screen_rect = (0, 0, WIN_WIDTH, WIN_HEIGHT)
 
@@ -20,11 +21,13 @@ pygame.init()
 
 screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 
+
 class Bird(pygame.sprite.Sprite):
     WIDTH = HEIGHT = 32
     SINK_SPEED = 0.18
     CLIMB_SPEED = 0.3
     CLIMB_DURATION = 333.3
+
     def __init__(self, x, y, msec_to_climb, images):
 
         super(Bird, self).__init__()
@@ -36,7 +39,7 @@ class Bird(pygame.sprite.Sprite):
 
     def update(self, delta_frames=1):
         if self.msec_to_climb > 0:
-            frac_climb_done = 1 - self.msec_to_climb/Bird.CLIMB_DURATION
+            frac_climb_done = 1 - self.msec_to_climb / Bird.CLIMB_DURATION
             self.y -= (Bird.CLIMB_SPEED * frames_to_msec(delta_frames) *
                        (1 - math.cos(frac_climb_done * math.pi)))
             self.msec_to_climb -= frames_to_msec(delta_frames)
@@ -62,9 +65,6 @@ class Bird(pygame.sprite.Sprite):
         return Rect(self.x, self.y, Bird.WIDTH, Bird.HEIGHT)
 
 
-
-
-
 class Pipess(pygame.sprite.Sprite):
     WIDTH = 80
     PIECE_HEIGHT = 32
@@ -77,33 +77,29 @@ class Pipess(pygame.sprite.Sprite):
         self.image.convert()
         self.image.fill((0, 0, 0, 0))
         total_pipe_body_pieces = int(
-            (WIN_HEIGHT -                  
-             3 * Bird.HEIGHT -            
-             3 * Pipess.PIECE_HEIGHT) /  
-            Pipess.PIECE_HEIGHT         
+            (WIN_HEIGHT -
+             3 * Bird.HEIGHT -
+             3 * Pipess.PIECE_HEIGHT) /
+            Pipess.PIECE_HEIGHT
         )
         self.bottom_pieces = randint(1, total_pipe_body_pieces)
         self.top_pieces = total_pipe_body_pieces - self.bottom_pieces
 
-        
         for i in range(1, self.bottom_pieces + 1):
-            piece_pos = (0, WIN_HEIGHT - i*Pipess.PIECE_HEIGHT)
+            piece_pos = (0, WIN_HEIGHT - i * Pipess.PIECE_HEIGHT)
             self.image.blit(pipe_body_img, piece_pos)
         bottom_pipe_end_y = WIN_HEIGHT - self.bottom_height_px
         bottom_end_piece_pos = (0, bottom_pipe_end_y - Pipess.PIECE_HEIGHT)
         self.image.blit(pipe_end_img, bottom_end_piece_pos)
 
-       
         for i in range(self.top_pieces):
             self.image.blit(pipe_body_img, (0, i * Pipess.PIECE_HEIGHT))
         top_pipe_end_y = self.top_height_px
         self.image.blit(pipe_end_img, (0, top_pipe_end_y))
 
-        
         self.top_pieces += 1
         self.bottom_pieces += 1
 
-        
         self.mask = pygame.mask.from_surface(self.image)
 
     @property
@@ -129,13 +125,19 @@ class Pipess(pygame.sprite.Sprite):
         return pygame.sprite.collide_mask(self, bird)
 
 
+
+
 def load_images():
     def load_image(img_file_name):
         file_name = os.path.join('.', 'images', img_file_name)
         img = pygame.image.load(file_name)
         img.convert()
         return img
-    return {'pero':load_image('star.png'),'background': load_image('background.png'),'petuh' : load_image('petuh.png'),'pipe-end': load_image('pipe_end.png'), 'pipe-body': load_image('pipe_body.png'),'bird-wingup': load_image('bird_wing_up.png'),'bird-wingdown': load_image('bird_wing_down.png')}
+
+    return {'pero': load_image('star.png'), 'background': load_image('background.png'),
+            'petuh': load_image('petuh.png'), 'pipe-end': load_image('pipe_end.png'),
+            'pipe-body': load_image('pipe_body.png'), 'bird-wingup': load_image('bird_wing_up.png'),
+            'bird-wingdown': load_image('bird_wing_down.png')}
 
 
 def frames_to_msec(frames, fps=FPS):
@@ -144,13 +146,15 @@ def frames_to_msec(frames, fps=FPS):
 
 def msec_to_frames(milliseconds, fps=FPS):
     return fps * milliseconds / 1000.0
+
+
 class Particle(pygame.sprite.Sprite):
     # сгенерируем частицы разного размера
     images = load_images()
     fire = [images['pero']]
-    rand_angle = range(1,359)
-    for scale in (5,10,20):
-        fire.append(pygame.transform.rotate(pygame.transform.scale(fire[0], (scale, scale)),random.choice(rand_angle)))
+    rand_angle = range(1, 359)
+    for scale in (5, 10, 20):
+        fire.append(pygame.transform.rotate(pygame.transform.scale(fire[0], (scale, scale)), random.choice(rand_angle)))
 
     def __init__(self, pos, dx, dy):
         super().__init__(all_sprites)
@@ -172,10 +176,12 @@ class Particle(pygame.sprite.Sprite):
         # перемещаем частицу
         self.rect.x += self.velocity[0]
         self.rect.y += self.velocity[1]
-      #  self.image = pygame.transform.rotate(self.image,5)
+        #  self.image = pygame.transform.rotate(self.image,5)
         # убиваем, если частица ушла за экран
         if not self.rect.colliderect(screen_rect):
             self.kill()
+
+
 def create_particles(position):
     # количество создаваемых частиц
     particle_count = 16
@@ -183,22 +189,28 @@ def create_particles(position):
     numbers = range(-5, 12)
     for _ in range(particle_count):
         Particle(position, random.choice(numbers), random.choice(numbers))
+
+
 all_sprites = pygame.sprite.Group()
 
 
 def main():
     def startScreen():
         images = load_images()
+        sound = pygame.mixer.Sound("./sounds/kur2.ogg")
+        sound.play()
         introText = ["НОВЫЕ ПЕТУХИ: PYGAME", "",
                      "Правила игры:",
                      "Нажимайте кнопки: вверх, ввод, пробел ",
                      "или ПКМ, чтобы петух прыгнул",
                      "не врезайтесь в трубы!"]
 
-       # screen.fill(pygame.Color('blue'))
+        # screen.fill(pygame.Color('blue'))
         screen.blit(images['petuh'], (0, 0))
         font = pygame.font.Font(None, 30)
         textCoord = 50
+
+
         for line in introText:
             stringRendered = font.render(line, 1, pygame.Color('green'))
             introRect = stringRendered.get_rect()
@@ -216,6 +228,7 @@ def main():
                 elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                     return  # начинаем игру
             pygame.display.flip()
+
     def EndScreen(score=0):
         images = load_images()
         introText = ["ВЫ ПРОИГРАЛИ", "",
@@ -224,7 +237,8 @@ def main():
                      "Не бейте создателя,",
                      "Ваш счет: % i" % score,
                      "Любая кнопка выключит игру,",
-                     "Кнопка ПРОБЕЛ начнет заново"
+                     "Кнопка ПРОБЕЛ начнет заново,",
+                     "Кнопка Т откроет таблицу результатов"
                      ]
 
         screen.fill(pygame.Color('blue'))
@@ -240,22 +254,23 @@ def main():
             textCoord += introRect.height
             screen.blit(stringRendered, introRect)
         import liders
-        with open('name.txt','r') as file:
-            liders.AddPoint(file.readline(),score)
+        with open('name.txt', 'r') as file:
+            liders.AddPoint(file.readline(), score)
 
         while True:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit();
                     sys.exit();
-                if event.type == pygame.KEYDOWN and event.key == K_SPACE:
+                if event.type == pygame.KEYDOWN and (event.key == K_t or event.key == K_n):
+                    liders.Print_Table()
+                elif event.type == pygame.KEYDOWN and event.key == K_SPACE:
                     game()
                 elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
 
                     pygame.quit();
                     sys.exit();
             pygame.display.flip()
-
 
     pygame.display.set_caption('Новые петухи')
     startScreen()
@@ -264,7 +279,7 @@ def main():
         clock = pygame.time.Clock()
         score_font = pygame.font.SysFont(None, 32, bold=True)
         images = load_images()
-        bird = Bird(50, int(WIN_HEIGHT/2 - Bird.HEIGHT/2), 2, (images['bird-wingup'], images['bird-wingdown']))
+        bird = Bird(50, int(WIN_HEIGHT / 2 - Bird.HEIGHT / 2), 2, (images['bird-wingup'], images['bird-wingdown']))
 
         pipes = deque()
 
@@ -286,7 +301,7 @@ def main():
                 elif e.type == KEYUP and e.key in (K_PAUSE, K_p):
                     paused = not paused
                 elif e.type == MOUSEBUTTONUP or (e.type == KEYUP and
-                        e.key in (K_UP, K_RETURN, K_SPACE)):
+                                                 e.key in (K_UP, K_RETURN, K_SPACE)):
                     bird.msec_to_climb = Bird.CLIMB_DURATION
 
             if paused:
@@ -294,10 +309,10 @@ def main():
 
             pipe_collision = any(p.collides_with(bird) for p in pipes)
             if pipe_collision or 0 >= bird.y or bird.y >= WIN_HEIGHT - Bird.HEIGHT:
-                create_particles((bird.x,bird.y))
-                #timer = time.time()
-                #TIME_TO_CONTINUE=2
-                #while time.time() - timer < TIME_TO_CONTINUE:
+                create_particles((bird.x, bird.y))
+                # timer = time.time()
+                # TIME_TO_CONTINUE=2
+                # while time.time() - timer < TIME_TO_CONTINUE:
 
                 done = True
 
@@ -322,7 +337,7 @@ def main():
                     p.score_counted = True
 
             score_surface = score_font.render(str(score), True, (255, 255, 255))
-            score_x = WIN_WIDTH/2 - score_surface.get_width()/2
+            score_x = WIN_WIDTH / 2 - score_surface.get_width() / 2
             screen.blit(score_surface, (score_x, Pipess.PIECE_HEIGHT))
 
             pygame.display.flip()
@@ -330,6 +345,7 @@ def main():
         EndScreen(score)
 
     game()
+
 
 if __name__ == '__main__':
     main()

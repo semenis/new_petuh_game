@@ -39,6 +39,7 @@ class Bird(pygame.sprite.Sprite):
 
     def update(self, delta_frames=1):
         if self.msec_to_climb > 0:
+            #Ужасная тригонометрия 
             frac_climb_done = 1 - self.msec_to_climb / Bird.CLIMB_DURATION
             self.y -= (Bird.CLIMB_SPEED * frames_to_msec(delta_frames) *
                        (1 - math.cos(frac_climb_done * math.pi)))
@@ -48,14 +49,16 @@ class Bird(pygame.sprite.Sprite):
 
     @property
     def image(self):
-        if pygame.time.get_ticks() % 500 >= 250:
+        ANIMATIONS = 500
+        if pygame.time.get_ticks() % ANIMATIONS >= ANIMATIONS/2:
             return self._img_wingup
         else:
             return self._img_wingdown
 
     @property
     def mask(self):
-        if pygame.time.get_ticks() % 500 >= 250:
+        ANIMATIONS = 500
+        if pygame.time.get_ticks() % ANIMATIONS >= ANIMATIONS/2:
             return self._mask_wingup
         else:
             return self._mask_wingdown
